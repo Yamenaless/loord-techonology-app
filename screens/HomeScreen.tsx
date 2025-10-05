@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../contexts/LanguageContext';
 import { theme } from '../data/theme';
 import { categories, products, banners, testimonials, contactInfo } from '../data/dummyData';
 
@@ -24,6 +26,8 @@ const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const [currentBanner, setCurrentBanner] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -171,8 +175,8 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>LoordTechnology</Text>
-          <Text style={styles.subtitle}>PC Components, Laptops & Gaming Gear</Text>
+          <Text style={styles.title}>{t('home.title')}</Text>
+          <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
         </View>
 
         {/* Search Box */}
@@ -180,7 +184,7 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.searchBox} onPress={handleSearchPress}>
             <Ionicons name="search" size={20} color={theme.colors.textSecondary} />
             <Text style={styles.searchPlaceholder}>
-              {searchQuery || 'Search for products...'}
+              {searchQuery || t('home.searchPlaceholder')}
             </Text>
             <Ionicons name="mic" size={20} color={theme.colors.textSecondary} />
           </TouchableOpacity>
@@ -404,7 +408,7 @@ export default function HomeScreen() {
                 <Ionicons name="search" size={20} color={theme.colors.textSecondary} />
                 <TextInput
                   style={styles.searchInput}
-                  placeholder="Search for products..."
+                  placeholder={t('home.searchPlaceholder')}
                   placeholderTextColor={theme.colors.textSecondary}
                   value={searchQuery}
                   onChangeText={setSearchQuery}

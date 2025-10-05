@@ -11,30 +11,39 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { theme } from '../data/theme';
 import { userProfile, orders } from '../data/dummyData';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
+  const { language, changeLanguage, isRTL } = useLanguage();
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('profile.signOut'),
+      t('profile.signOutConfirmation', 'Are you sure you want to sign out?'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sign Out',
+          text: t('profile.signOut'),
           style: 'destructive',
           onPress: () => {
             logout();
-            Alert.alert('Signed Out', 'You have been successfully signed out.');
+            Alert.alert(t('profile.signedOut'), t('profile.signedOutMessage', 'You have been successfully signed out.'));
           },
         },
       ]
     );
+  };
+
+  const handleLanguageChange = () => {
+    const newLanguage = language === 'en' ? 'ar' : 'en';
+    changeLanguage(newLanguage);
   };
 
   const handleOrderPress = (order: any) => {
@@ -100,7 +109,7 @@ export default function ProfileScreen() {
 
         {/* Orders History */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Orders</Text>
+          <Text style={styles.sectionTitle}>{t('profile.orderHistory')}</Text>
           {(orders || []).map((order, index) => (
             <View key={index}>
               {renderOrder(order)}
@@ -109,12 +118,12 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
+          <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
           
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="person-outline" size={20} color={theme.colors.text} />
-              <Text style={styles.menuItemText}>Personal Information</Text>
+              <Text style={styles.menuItemText}>{t('profile.personalInfo')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} />
           </TouchableOpacity>
@@ -164,9 +173,15 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
+        <TouchableOpacity style={styles.languageButton} onPress={handleLanguageChange}>
+          <Ionicons name="language-outline" size={20} color={theme.colors.primary} />
+          <Text style={styles.languageText}>{t('profile.changeLanguage')}</Text>
+          <Text style={styles.currentLanguage}>{language === 'en' ? 'English' : 'العربية'}</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color={theme.colors.error} />
-          <Text style={styles.logoutText}>Sign Out</Text>
+          <Text style={styles.logoutText}>{t('profile.signOut')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -243,6 +258,28 @@ const styles = StyleSheet.create({
     ...theme.typography.bodyMedium,
     color: theme.colors.text,
     marginLeft: theme.spacing.md,
+  },
+  languageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.white,
+    padding: theme.spacing.md,
+    marginHorizontal: theme.spacing.md,
+    marginVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.lg,
+    ...theme.shadows.sm,
+  },
+  languageText: {
+    ...theme.typography.body,
+    color: theme.colors.text,
+    fontWeight: '600',
+    marginLeft: theme.spacing.sm,
+    flex: 1,
+  },
+  currentLanguage: {
+    ...theme.typography.caption,
+    color: theme.colors.primary,
+    fontWeight: '500',
   },
   logoutButton: {
     flexDirection: 'row',
